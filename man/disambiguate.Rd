@@ -5,8 +5,8 @@
 \title{Genotype List Disambiguation Using Human Leukocyte Antigen (HLA) Allele Frequency Data}
 \usage{
 disambiguate(glstrings, freqbyacc = NULL, deletedalleles = NULL,
-  allelehistory = NULL, probratio = 0.5, regionstring = "SSA",
-  imgtversion = "guess", dislevel = 0, ruledat = gl_match_rules,
+  allelehistory = NULL, regionstring = "SSA", imgtversion = "guess",
+  probratio = 0.5, dislevel = 0, ruledat = gl_match_rules,
   mode = "normal", hlaprefix = FALSE, log = FALSE, allelelog = TRUE,
   verbose = "default", dataload = "default")
 }
@@ -19,11 +19,11 @@ disambiguate(glstrings, freqbyacc = NULL, deletedalleles = NULL,
 
 \item{allelehistory}{IMGT-versioned allele name table. If not provided and if \code{loadHLAdata()} can be called succesfully, the parameter defaults to \code{gl_HLA_allele_history}, an object that can be created using \code{updateHLAdata()}. Also, a data object in this package, \code{package_HLA_allele_history}, contains IMGT allele history data. Any data frame with the latter's structure can be passed as this argument, useful for providing updated IMGT/HLA version data.}
 
-\item{probratio}{Probability ratio <=1 and >= 0 used to maintain ambiguity for possible genotypes at a locus with predicted frequency >= \code{probratio} * maximum genotype frequency calculated for that locus. Note that setting \code{dislevel} to 1 will override \code{probratio} < 1.0. Defaults to 0.5.}
-
 \item{regionstring}{Geographic region designation from the frequency by accession data frame. This is the region for which HLA allele frequency data will be used in genotype frequency calculations. For example, after running \code{updateHLAdata()} successfully, \code{tmp <- disambiguate(region="")} will show the available region designations on the console.}
 
 \item{imgtversion}{Defaults to \code{"guess"}. This parameter is required to specify the version of IMGT/HLA allele namespace as defined in data passed with parameter \code{allelehistory}. For example, after running \code{updateHLAdata()} successfully, \code{tmp <- disambiguate(region="AUS",probratio=1,imgtversion="")} will show the available IMGT versions on the console. If this parameter is set to \code{"guess"}, \code{guessimgtversion} will be passed the GL string(s) to attempt to determine the IMGT/HLA allele version.}
+
+\item{probratio}{Probability ratio <=1 and >= 0 used to maintain ambiguity for possible genotypes at a locus with predicted frequency >= \code{probratio} * maximum genotype frequency calculated for that locus. Note that setting \code{dislevel} to 1 will override \code{probratio} < 1.0. Defaults to 0.5.}
 
 \item{dislevel}{Disambiguation level, where 1 indicates complete disambiguation to single genotypes at each locus, and 0 permits partial disambiguation.}
 
@@ -86,5 +86,8 @@ gls.out
 # ret[1:2,1:4]
 # write the verbose log for the second glstring to a file for inspection
 # write(ret$log[2],file="HLA_disambiguateR_tmplog.txt")
+#
+# When there is doubt about the geographic region appropriate for disambiguating GL strings, one can investigate the effect of region on the glscores:
+# sapply(levels(gl_HLA_frequencies_by_accession$data$region), function(X) {d <- disambiguate(test.glstrings,region=X,verbose="quiet",dislevel=1);return(sum(d$data$glscores))})
 
 }

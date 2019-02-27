@@ -1,7 +1,7 @@
 Package: disambiguateR
 Title: HLA GL String Disambiguation Using Allele Frequencies And Generic GL
     String Canonicalization
-Version: 0.9.4.9000
+Version: 0.9.6.9000
 Authors@R: person("Hugh", "Salamon", email = "hugh@knowledgesynthesis.com", role = c("aut", "cre"))
 Description: This package provides an algorithm to disambiguate Genotype List
     (GL) string data based on human leukocyte antigen (HLA) allele frequency data,

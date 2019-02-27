@@ -57,9 +57,15 @@
 #' # ret[1:2,1:4]
 #' # write the verbose log for the second glstring to a file for inspection
 #' # write(ret$log[2],file="HLA_disambiguateR_tmplog.txt")
+#' #
+#' # When there is doubt about the geographic region appropriate for disambiguating GL strings, one can investigate the effect of region on the glscores:
+#' # sapply(levels(gl_HLA_frequencies_by_accession$data$region), function(X) {d <- disambiguate(test.glstrings,region=X,verbose="quiet",dislevel=1);return(sum(d$data$glscores))})
 #'
-disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehistory=NULL,probratio=0.5,regionstring="SSA",imgtversion="guess",dislevel=0,ruledat=gl_match_rules,mode="normal",hlaprefix=FALSE,log=FALSE,allelelog=TRUE,verbose="default",dataload="default") {
-    version <- "0.9.4.9000"
+disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehistory=NULL,regionstring="SSA",imgtversion="guess",probratio=0.5,dislevel=0,ruledat=gl_match_rules,mode="normal",hlaprefix=FALSE,log=FALSE,allelelog=TRUE,verbose="default",dataload="default") {
+    # At the end of this code is a brief outline of the algorithm used to disambiguate GL strings. 
+    # Much of the code currently (Jan 2019) is concerned with processing the function call, handling table loading, and processing the GL string(s).
+    # Future code might be easier to understand were the algorithm itself in another function.
+    version <- "0.9.6.9000"
     if(log == FALSE) {
         dlog <- NA
     } else {
@@ -444,6 +450,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
     glout <- vector()
     glscores <- vector()
 
+    # Iterate through the glstrings and disambiguate each one. An outline of the algorithm is at the end of this code.
     for(ng in 1:length(glstrings)) {
         glstring = glstrings[ng]
         if(log == TRUE) {
@@ -515,7 +522,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
                                     prob <- NA
                                     onefreq <- sort(c(freq1,freq2),na.last=TRUE)[1]
                                 } else {
-                                    # This is APFP
+                                    # This is the allele pair frequency product (APFP). See notes on the algorithm at the end of this code.
                                     prob <- freq1 * freq2
                                     onefreq <- NA
                                 }
@@ -582,7 +589,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             pairs <- pairs[order(pairs$a1,pairs$a2),]
 
             if(!all(is.na(pairs$prob)) & any(pairs$prob >= 0)) {
-                # This is MAPFP
+                # This is the maximum allele pair frequency product (MAPFP). See notes on the algorithm at the end of this code.
                 locusfreq <- max(pairs$prob,na.rm=TRUE)
                 scoretmp <- locusfreq
                 locusfreq <- locusfreq * probratio
@@ -657,7 +664,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
     # if dislevel == 0 & probratio < 1 the algorithm is
     # for each locus
         # create all possible allele pairs consistent with GL String
-        # calculate allele pairs frequency products (APFPs)
+        # calculate allele pair frequency products (APFPs)
             # Maximum allele pair frequency product (MAPFP) > 0
                 # keep allele pairs for which APFP > R*MAPFP, for probratio R
             # Maximum allele pair frequency product (MAPFP) == 0
