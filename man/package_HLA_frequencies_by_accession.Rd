@@ -4,7 +4,8 @@
 \name{package_HLA_frequencies_by_accession}
 \alias{package_HLA_frequencies_by_accession}
 \title{HLA frequencies by accession}
-\format{A list object with three items:
+\format{
+A list object with three items:
 \itemize{
   \item $data: a data frame with 115 observations and 8 variables:
   \itemize{
@@ -19,7 +20,8 @@
   }
   \item $version.date: version date
   \item $error: value "". When using updateHLAdata(), a list object of the same format as package_HLA_frequencies_by_accession will be created and named gl_HLA_frequencies_by_accession. In the latter case, errors in creating the object upon attempted download will be recorded in this variable.
-}}
+}
+}
 \source{
 \url{http://igdawg.org/pubs/HLA_frequencies_by_accession_and_region.txt}
 }

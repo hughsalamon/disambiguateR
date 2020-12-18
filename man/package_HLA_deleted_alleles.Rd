@@ -4,7 +4,8 @@
 \name{package_HLA_deleted_alleles}
 \alias{package_HLA_deleted_alleles}
 \title{HLA deleted allele records (limited to those where allele names were replaced)}
-\format{A list object with three items:
+\format{
+A list object with three items:
 \itemize{
   \item $data: a data frame with 115 observations and 6 variables:
   \itemize{
@@ -17,7 +18,8 @@
   }
   \item $version.date: version date
   \item $error: value "". When using updateHLAdata(), a list object of the same format as package_HLA_deleted_alleles will be created and named gl_HLA_deleted_alleles. In the latter case, errors in creating the object upon attempted download will be recorded in this variable.
-}}
+}
+}
 \source{
 \url{https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom.txt}
 }

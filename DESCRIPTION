@@ -1,11 +1,12 @@
 Package: disambiguateR
-Title: HLA GL String Disambiguation Using Allele Frequencies And Generic GL
-    String Canonicalization
-Version: 0.9.6.9000
+Title: Genotype List String Disambiguation Using Human Leukocyte Antigen Allele Frequencies and
+    a Generic String Canonicalization Algorithm
+Version: 0.9.10.9000
 Authors@R: person("Hugh", "Salamon", email = "hugh@knowledgesynthesis.com", role = c("aut", "cre"))
 Description: This package provides an algorithm to disambiguate Genotype List
     (GL) string data based on human leukocyte antigen (HLA) allele frequency data,
-    deleted allele data, geographic region, and IMGT version. Arguments must
+    deleted allele data, geographic region, and International Immunogenetics 
+    information system (IMGT) version. Arguments must
     be provided to define the behavior of the function with respect to the desired
     output, including complete or partial disambiguation, whether allele names
     should be standardized to IMGT version data or HLA accession numbers should be
@@ -20,4 +21,5 @@ Depends:
 Imports: RCurl
 License: GPL-2
 LazyData: true
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+RoxygenNote: 7.1.1

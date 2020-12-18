@@ -2,7 +2,7 @@
 % Please edit documentation in R/canonicalize.R
 \name{canonicalize}
 \alias{canonicalize}
-\title{Canonicalize GL Strings}
+\title{Canonicalize Genotype List (GL) Strings}
 \usage{
 canonicalize(glstring)
 }
@@ -10,13 +10,15 @@ canonicalize(glstring)
 \item{glstring}{A character string containing valid GL string information on alleles at one or more loci.}
 }
 \value{
-A character string transformed according to the sorting and simplifying algorithm in the function.
+A list with the components:
+ \item{glstring}{A character string transformed according to the sorting and simplifying algorithm in the function or an empty string in the case of an error.}
+ \item{error}{An error message string or empty string.}
 }
 \description{
 This function parses a GL string, represents information at each locus as an adjacency matrix, and returns a sorted, canonicalized GL string. Two GL strings that contain the same information regarding genotypes, not matter how different, both will be converted to an identical, compact GL string.
 }
 \details{
-Any string containing the GL string delimiters ^, +, /, or | will be parsed, analyzed, and (possibly) transformed.  Strings not containing these symbols should be returned unchanged. No validation of HLA or KIR GL strings is performed.
+Any string containing the GL string delimiters ^, +, /, or | will be parsed, analyzed, and (possibly) transformed.  Strings not containing these symbols should be returned unchanged. No validation of human leukocyte antigen (HLA) or killer cell immunoglobulin-like receptor (KIR) GL strings is performed.
 }
 \examples{
 gls <- c("HLA-A*11011/HLA-A*11012+HLA-A*2410^HLA-C*0702/HLA-C*0710+HLA-C*0704/HLA-C*0711/HLA-C*0712|HLA-C*0703+HLA-C*0704/HLA-C*0711/HLA-C*0712^HLA-B*1532/HLA-B*1535+HLA-B*1803","HLA-A*02011/HLA-A*02012/HLA-A*02014/HLA-A*0209/HLA-A*0230/HLA-A*0231+HLA-A*0207/HLA-A*0215N/HLA-A*0218|HLA-A*0207/HLA-A*0215N/HLA-A*0218+HLA-A*0207/HLA-A*0215N/HLA-A*0218^HLA-C*03041/HLA-C*0308/HLA-C*0309+HLA-C*0702/HLA-C*0710|HLA-C*0310+HLA-C*0702/HLA-C*0710^HLA-B*4601+HLA-B*4601")

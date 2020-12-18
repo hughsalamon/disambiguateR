@@ -4,7 +4,8 @@
 \name{package_HLA_allele_history}
 \alias{package_HLA_allele_history}
 \title{HLA allele history}
-\format{A list object with three items:
+\format{
+A list object with three items:
 \itemize{
   \item $data: a data frame with 17558 observations and 76 variables:
   \itemize{
@@ -13,7 +14,8 @@
   }
   \item $version.date: version date
   \item $error: value "". When using updateHLAdata(), a list object of the same format as package_HLA_allele_history will be created and named gl_HLA_allele_history. In the latter case, errors in creating the object upon attempted download will be recorded in this variable.
-}}
+}
+}
 \source{
 \url{ftp://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt}
 }

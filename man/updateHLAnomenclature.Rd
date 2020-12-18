@@ -4,8 +4,11 @@
 \alias{updateHLAnomenclature}
 \title{HLA nomenclature data updating function}
 \usage{
-updateHLAnomenclature(force = FALSE, current = gl_HLA_deleted_alleles,
-  url = "https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom.txt")
+updateHLAnomenclature(
+  force = FALSE,
+  current = gl_HLA_deleted_alleles,
+  url = "https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom.txt"
+)
 }
 \arguments{
 \item{force}{Forces updating even if data is older or smaller than the current data.}

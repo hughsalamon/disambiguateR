@@ -4,9 +4,11 @@
 \alias{updateHLAfrequencies}
 \title{HLA allele frequencies data updating function}
 \usage{
-updateHLAfrequencies(force = FALSE,
+updateHLAfrequencies(
+  force = FALSE,
   current = gl_HLA_frequencies_by_accession,
-  url = "http://igdawg.org/pubs/HLA_frequencies_by_accession_and_region.txt")
+  url = "http://igdawg.org/pubs/HLA_frequencies_by_accession_and_region.txt"
+)
 }
 \arguments{
 \item{force}{Forces updating even if data is older or smaller than the current data.}

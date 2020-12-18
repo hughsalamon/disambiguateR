@@ -4,9 +4,12 @@
 \alias{updateHLAhistory}
 \title{HLA history data updating function}
 \usage{
-updateHLAhistory(force = FALSE, quickcheck = FALSE,
+updateHLAhistory(
+  force = FALSE,
+  quickcheck = FALSE,
   current = gl_HLA_allele_history,
-  url = "http://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt")
+  url = "http://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt"
+)
 }
 \arguments{
 \item{force}{Forces updating even if data is older or smaller than the current data.}

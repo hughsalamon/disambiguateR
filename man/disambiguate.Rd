@@ -4,11 +4,23 @@
 \alias{disambiguate}
 \title{Genotype List Disambiguation Using Human Leukocyte Antigen (HLA) Allele Frequency Data}
 \usage{
-disambiguate(glstrings, freqbyacc = NULL, deletedalleles = NULL,
-  allelehistory = NULL, regionstring = "SSA", imgtversion = "guess",
-  probratio = 0.5, dislevel = 0, ruledat = gl_match_rules,
-  mode = "normal", hlaprefix = FALSE, log = FALSE, allelelog = TRUE,
-  verbose = "default", dataload = "default")
+disambiguate(
+  glstrings,
+  freqbyacc = NULL,
+  deletedalleles = NULL,
+  allelehistory = NULL,
+  regionstring = "SSA",
+  imgtversion = "guess",
+  probratio = 0.5,
+  dislevel = 0,
+  ruledat = gl_match_rules,
+  mode = "normal",
+  hlaprefix = FALSE,
+  log = FALSE,
+  allelelog = TRUE,
+  verbose = "default",
+  dataload = "default"
+)
 }
 \arguments{
 \item{glstrings}{A vector of GL strings to be disambiguated.}
@@ -54,7 +66,7 @@ A list with the components:
    \item{$status}{A factor with possible levels "deleted" (allele was found to have been deleted and replaced), "imgt" (allele was found in the specified IMGT version), "accession-imgt" (allele was identified as an HLA accession number), "rules" (allele was found in the specified IMGT version after applying HLA GL string matching rules), or "unidentified" if an accession number could not be assigned.}
 
  \item{error.accession}{TRUE if failures to identify accession numbers occurred, FALSE otherwise. }
- \item{error.parse}{TRUE if failures to parse input GL strings were encountered, FALSE otherwise.}
+ \item{error.parse}{TRUE if failures to parse input GL strings or process them were encountered, FALSE otherwise.}
  \item{error.call}{A character string describing an error. NA if GL strings are returned.}
  \item{log}{Verbose details on GL String disambiguation. NA if argument \code{log} is FALSE.}
 }
@@ -88,6 +100,6 @@ gls.out
 # write(ret$log[2],file="HLA_disambiguateR_tmplog.txt")
 #
 # When there is doubt about the geographic region appropriate for disambiguating GL strings, one can investigate the effect of region on the glscores:
-# sapply(levels(gl_HLA_frequencies_by_accession$data$region), function(X) {d <- disambiguate(test.glstrings,region=X,verbose="quiet",dislevel=1);return(sum(d$data$glscores))})
+# sapply(unique(gl_HLA_frequencies_by_accession$data$region), function(X) {d <- disambiguate(test.glstrings,region=X,verbose="quiet",dislevel=1);return(sum(d$data$glscores))})
 
 }
