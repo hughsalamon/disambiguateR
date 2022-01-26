@@ -14,12 +14,12 @@
 #' @param hlaprefix Defaulting to FALSE, if TRUE this parameter will force "HLA-" prefix onto all reported allele names, with the exception of accession numbers.
 #' @param log Logical to determine if verbose logging of disambiguation calculations is returned with disambiguated GL strings. Defaults to \code{FALSE}.
 #' @param allelelog Logical to determine if a table of allele name mappings to accession numbers should be returned for each GL string. Defaults to \code{TRUE}.
-#' @param verbose Default value \code{"default"} provides some console feedback on each disambiguated GL string, \code{"quiet"} silences all messaging by the package with the exception of errors, and \code{"verbose"} provides information regarding allele name mapping in addition to default messaging on the console
+#' @param verbose Default value \code{"default"} provides some console feedback on each disambiguated GL string, \code{"quiet"} silences all messaging by the package with the exception of inconsistency errors, and \code{"verbose"} provides information regarding allele name mapping in addition to default messaging on the console
 #' @param dataload Controls usage of HLA data tables and by default attempts to load or update and load the tables required for disambiguation. This parameter has the default value \code{"default"}, in which case when versions cannot be determined for \code{allelehistory}, \code{freqbyacc}, or \code{deletedalleles}, the function attempts to load or download and load all the HLA data tables. If the parameter has the value \code{"package"}, then the tables delivered with the package install will be used. If the parameter has the value \code{"argsonly"}, then only when versions can be determined for \code{allelehistory}, \code{freqbyacc}, and \code{deletedalleles} will the function proceed.
 #'
 #' @return A list with the components:
 #'  \item{data}{A data frame with two variables:}
-#'    \item{$glstrings}{A vector of disambiguated GL strings, one for each input GL string, in the same order as input. Returns NA upon encountering errors processing arguments.}
+#'    \item{$glstrings}{A vector of disambiguated GL strings, one for each input GL string, in the same order as input. Returns NA upon encountering inconsistency processing arguments.}
 #'    \item{$glscores}{A vector of scores, one for each input GL string, in the same order as input.}
 #'  
 #'  \item{alleletable}{A data frame containing five variables:}
@@ -28,9 +28,9 @@
 #'    \item{$accession}{The accession number assigned the allele, or NA (character).}
 #'    \item{$status}{A factor with possible levels "deleted" (allele was found to have been deleted and replaced), "imgt" (allele was found in the specified IMGT version), "accession-imgt" (allele was identified as an HLA accession number), "rules" (allele was found in the specified IMGT version after applying HLA GL string matching rules), or "unidentified" if an accession number could not be assigned.}
 #'
-#'  \item{error.accession}{TRUE if failures to identify accession numbers occurred, FALSE otherwise. }
-#'  \item{error.parse}{TRUE if failures to parse input GL strings or process them were encountered, FALSE otherwise.}
-#'  \item{error.call}{A character string describing an error. NA if GL strings are returned.}
+#'  \item{inconsistency.accession}{TRUE if failures to identify accession numbers occurred, FALSE otherwise. }
+#'  \item{inconsistency.parse}{TRUE if failures to parse input GL strings or process them were encountered, FALSE otherwise.}
+#'  \item{inconsistency.call}{A character string describing an inconsistency. NA if GL strings are returned.}
 #'  \item{log}{Verbose details on GL String disambiguation. NA if argument \code{log} is FALSE.}
 #'
 #' @details In this version, "Cw" and "C" are both permitted in glstrings, even if inappropriate to the IMGT version. Use \code{mode="version"} to see the correct allele names for the version. "HLA-" preceding locus designations will be stripped off into order to avoid incorrect allele pairs calculations that could occur in the case that the prefix is used inconsistently within a locus. Haplotype information is not parsed or sorted in this version, so the behavior of disambiguateR for such data is not well-defined. Because disambiguateR calls canonicalize before returning GL strings, the GL strings returned will be reproducible and all input GL strings that describe logically equivalent information will be reported with the same output GL string. If the mode="accession" parameter is set and disambiguation levels are set identically (dislevel,probratio), two GL strings that use different variations of allele names or different IMGT version namespaces and are determined to be semantically equivalent will result in the same output GL string. The glscores are the means of the maximum allele pair frequencies across all loci. When allele pair frequencies cannot be calculated, the maximum allele pair frequency value for a locus is set to zero. The glscores are not affected by complete or partial disambiguation (for example, the \code{dislevel} and \code{probratio} paramaters do not affect the calculation of glscores).
@@ -39,10 +39,13 @@
 #' gls <- c("A*11011/A*11012+A*3303^C*03041/C*0308/C*0309+C*07011/C*07012/C*0706|C*03041/C*0308/C*0309+C*0705|C*0305+C*07011/C*07012/C*0706|C*0310+C*07011/C*07012/C*0706|C*0310+C*0705^B*4002+B*44031/B*44032","HLA-A*0203+HLA-A*2402101/HLA-A*2402101L/HLA-A*24022/HLA-A*2409N/HLA-A*2411N/HLA-A*2420/HLA-A*2426^HLA-B*40011/HLA-B*40012+HLA-B*5401")
 #' # dislevel=0 will perform partial disambiguation. Note extensive log information to stderr.
 #' gls.out <- disambiguate(probratio=0.5,freqbyacc=package_HLA_frequencies_by_accession,deletedalleles=package_HLA_deleted_alleles,allelehistory=package_HLA_allele_history,region="NAF",imgtversion = "1050",dislevel=0,mode="normal",glstrings=gls)
-#' gls.out
+#' str(gls.out)
+#' gls.out$data
 #' # dislevel=1 will perform complete disambiguation, irrespective of probratio value.
 #' gls.out <- disambiguate(probratio=0.5,freqbyacc=package_HLA_frequencies_by_accession,deletedalleles=package_HLA_deleted_alleles,allelehistory=package_HLA_allele_history,region="NAF",imgtversion = "1050",dislevel=1,mode="normal",glstrings=gls,log=TRUE)
-#' gls.out
+#' # Top 10 rows of log
+#' cat(paste(strsplit(gls.out$log,"\n")[[1]][1:10],collapse="\n"))
+#' gls.out$data
 #'
 #' # not run
 #' # Normally, one will want the latest HLA data tables:
@@ -63,16 +66,16 @@
 #'
 disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehistory=NULL,regionstring="SSA",imgtversion="guess",probratio=0.5,dislevel=0,ruledat=gl_match_rules,mode="normal",hlaprefix=FALSE,log=FALSE,allelelog=TRUE,verbose="default",dataload="default") {
     # At the end of this code is a brief outline of the algorithm used to disambiguate GL strings. 
-    # Much of the code currently (Jan 2019) is concerned with processing the function call, handling table loading, and processing the GL string(s).
+    # Much of the code is concerned with processing the function call, handling table loading, and processing the GL string(s).
     # Future code might be easier to understand were the algorithm itself in another function.
-    version <- "0.9.10.9000"
+    version <- "1.0.0"
     if(log == FALSE) {
         dlog <- NA
     } else {
         dlog <- paste("disambiguate ", version, "\n", sep="")
         dlog <- paste(dlog,paste("freqbyacc version date:",freqbyacc$version.date),sep="\n")
         dlog <- paste(dlog,paste("deletedalleles version date:",deletedalleles$version.date),sep="\n")
-        dlog <- paste(dlog,paste("allelehistory version date:",allelehistory$version.date),sep="\n")
+        dlog <- paste(dlog,paste("allelehistory version:",allelehistory$version),sep="\n")
     }
     alleletable <- data.frame(allele=NA,matched=NA,accession=NA,status=NA)
     if(!(verbose %in% c("default","quiet","verbose"))) {
@@ -81,7 +84,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste("disambiguate",version,"Error: verbose  must be \"default\", \"quiet\", or \"verbose\".\n Exiting..."),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="verbose parameter value not recognized",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="verbose parameter value not recognized",log=dlog)
         return(ret)
     }
     if(verbose == "default" || verbose == "verbose") {
@@ -93,7 +96,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste("disambiguate",version,"Error: dataload  must be \"default\", \"package\", or \"argonly\".\n Exiting..."),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="dataload parameter value not recognized",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="dataload parameter value not recognized",log=dlog)
         return(ret)
     }
     # check HLA data loading parameters, load or download and load data if needed, depending on dataload parameter
@@ -124,7 +127,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
                 # calling download failed, exit gracefully
                 cat("disambiguateR data tables load failed, attempt to download and load data also failed, Exiting...\n")
                 data <- data.frame(glstrings=NA,glscores=NA)
-                ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="freqbyacc, allelehistory, and deletedalleles parameters values were not all valid and attempts to load and download failed",log=dlog)
+                ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="freqbyacc, allelehistory, and deletedalleles parameters values were not all valid and attempts to load and download failed",log=dlog)
                 return(ret)
             }
         } else if(dataload == "package") {
@@ -139,21 +142,21 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             # warn regarding missing data and exit gracefully
             cat("disambiguateR freqbyacc, allelehistory, and deletedalleles must all be defined and point to valid HLA data objects, Exiting...\n")
             data <- data.frame(glstrings=NA,glscores=NA)
-            ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="freqbyacc, allelehistory, and deletedalleles parameters values were not all valid",log=dlog)
+            ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="freqbyacc, allelehistory, and deletedalleles parameters values were not all valid",log=dlog)
             return(ret)
         }
     }
     deletedalleles <- cbind(paste(deletedalleles$data[,1],deletedalleles$data[,2],sep=""),paste(deletedalleles$data[,1],deletedalleles$data[,5],sep=""))
     allelehistory <- allelehistory$data
 
-    # Evaluate remaining arguments to this function, return with errors as needed
+    # Evaluate remaining arguments to this function, return with inconsistencies as needed
     if(!(regionstring %in% unique(freqbyacc$data$region))) {
         cat(paste("disambiguate",version,"Error: region",regionstring,"not recognized. Possible regions are:",paste(as.list(unique(freqbyacc$data$region)),collapse=", "),". Exiting...\n"))
         if(log == TRUE) {
             dlog <- paste(dlog,paste("disambiguate",version,"Error: region",regionstring,"not recognized. Possible regions are:",paste(as.list(unique(freqbyacc$data$region)),collapse=", "),". Exiting..."),sep="\n")
         }
         data <-  data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="region not recognized",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="region not recognized",log=dlog)
         return(ret)
     }
     if(verbose == "default" || verbose == "verbose") {
@@ -168,7 +171,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste("disambiguate",version,"Error: disambiguation level must be 1 (complete disambiguation) or 0 (partial disambiguation). Exiting..."),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret<- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="disambiguation level must be 0 or 1",log=dlog)
+        ret<- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="disambiguation level must be 0 or 1",log=dlog)
         return(ret)
     }
     if(verbose == "default" || verbose == "verbose") {
@@ -183,7 +186,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste("disambiguate",version,"Error: mode must be \"normal\" (returns GL strings with alleles as named in input, with only minor standardization), \"accession\" (returns GL strings with accession numbers), or \"version\" (returns GL strings with alleles standardized to the names matching the specified version)\n Exiting..."),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="mode not recognized",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="mode not recognized",log=dlog)
         return(ret)
     }
     if(verbose == "default" || verbose == "verbose") {
@@ -198,7 +201,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste("disambiguate",version,"Error: hlaprefix must be a logical\n Exiting..."),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="hlaprefix not a logical",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="hlaprefix not a logical",log=dlog)
         return(ret)
     }
     if(verbose == "default" || verbose == "verbose") {
@@ -213,7 +216,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste("disambiguate",version,"Error: probratio",probratio,"not <= 1 and >= 0. Exiting..."),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="probratio not <= 1 and >= 0",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="probratio not <= 1 and >= 0",log=dlog)
         return(ret)
     } else if(dislevel == 1 && probratio < 1.0) {
         if(verbose == "default" || verbose == "verbose") {
@@ -238,7 +241,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
                 dlog <- paste(dlog,paste("disambiguate",version,"Error: guessimgtversion failed. Exiting..."),sep="\n")
             }
             data <- data.frame(glstrings=NA,glscores=NA)
-            ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="guessimgtversion failed",log=dlog)
+            ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="guessimgtversion failed",log=dlog)
             return(ret)
         }
     } else if(!(paste("X",imgtversion,sep="") %in% names(allelehistory))) {
@@ -251,7 +254,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
             dlog <- paste(dlog,paste(c(gsub("X","",names(allelehistory)[-1]),"\n"),collapse="\n"),sep="\n")
         }
         data <- data.frame(glstrings=NA,glscores=NA)
-        ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=FALSE,error.call="IMGT version not recognized",log=dlog)
+        ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=FALSE,inconsistency.call="IMGT version not recognized",log=dlog)
         return(ret)
     }
     if(verbose == "default" || verbose == "verbose") {
@@ -262,8 +265,8 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
     }
 
     Sys.setlocale("LC_COLLATE", "C") # turn off locale-specific sorting, usually, but not on all platforms
-    error.accession = FALSE
-    error.parse = FALSE
+    inconsistency.accession = FALSE
+    inconsistency.parse = FALSE
 
     name_version <- paste("v",imgtversion,sep="")
 
@@ -433,7 +436,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
                 alleletable[i,3] <- NA
                 alleletable[i,4] <- "unidentified"
             }
-            error.accession = TRUE
+            inconsistency.accession = TRUE
             if(mode == "accession" | mode == "version") {
                 alleleout[allalleles[i]] <- paste(allalleles[i],"Unidentified",sep="")
             } else {
@@ -481,9 +484,9 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
                     if(log == TRUE) {
                         dlog <- paste(dlog,paste("disambiguate ",version," Error: in GL String:\n    ",  glstring, "\n    \n    genotype:\n    ", genotypelist[ngl], "\n    has more than than two ambiguous alleles, because multiple + delimiters were found. Exiting...\n",sep=""),sep="\n")
                     }
-                    error.parse = TRUE
+                    inconsistency.parse = TRUE
                     data <- data.frame(glstrings=NA,glscores=NA)
-                    ret <- list(data=data,alleletable=alleletable,error.accession=FALSE,error.parse=error.parse,error.call="multiple + delimiters found",log=dlog)
+                    ret <- list(data=data,alleletable=alleletable,inconsistency.accession=FALSE,inconsistency.parse=inconsistency.parse,inconsistency.call="multiple + delimiters found",log=dlog)
                     return(ret)
                 }
                 alleles1 <- sort(unlist(strsplit(allelelist[1],"\\/")))
@@ -647,18 +650,18 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
         glscores[ng] <- mean(lociscores)
         gltmp <- canonicalize(paste(lociout,collapse="^"))
         glout[ng] <- gltmp$glstring
-        if(gltmp$error == "") {
+        if(gltmp$inconsistency == "") {
             if(log == TRUE) {
                 dlog <- paste(dlog,"Disambiguated GL String:",glout[ng],sep="\n")
             }
         } else {
-                error.parse = TRUE
-                dlog <- paste(dlog,paste("disambiguate ",version," Error: processing GL String:\n    ",  glstring, "\n    canonicalize failed for:\n    ", paste(lociout,collapse="^"), "\n    with error: ", gltmp$error,"\n",sep=""),sep="\n")
+                inconsistency.parse = TRUE
+                dlog <- paste(dlog,paste("disambiguate ",version," Error: processing GL String:\n    ",  glstring, "\n    canonicalize failed for:\n    ", paste(lociout,collapse="^"), "\n    with inconsistency: ", gltmp$inconsistency,"\n",sep=""),sep="\n")
             
         }
     }
     data <- data.frame(glstrings=I(as.character(glout)),glscores)
-    ret <- list(data=data,alleletable=alleletable,error.accession=error.accession,error.parse=error.parse,error.call=NA,log=dlog)
+    ret <- list(data=data,alleletable=alleletable,inconsistency.accession=inconsistency.accession,inconsistency.parse=inconsistency.parse,inconsistency.call=NA,log=dlog)
     return(ret)
 
     # Notes on the overall algorithm

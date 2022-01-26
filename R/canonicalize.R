@@ -3,8 +3,8 @@
 #' This function parses a GL string, represents information at each locus as an adjacency matrix, and returns a sorted, canonicalized GL string. Two GL strings that contain the same information regarding genotypes, not matter how different, both will be converted to an identical, compact GL string.
 #' @param glstring A character string containing valid GL string information on alleles at one or more loci.
 #' @return A list with the components:
-#'  \item{glstring}{A character string transformed according to the sorting and simplifying algorithm in the function or an empty string in the case of an error.}
-#'  \item{error}{An error message string or empty string.}
+#'  \item{glstring}{A character string transformed according to the sorting and simplifying algorithm in the function or an empty string in the case of an inconsistency error.}
+#'  \item{inconsistency}{An inconsistency error message string or empty string.}
 #' @details Any string containing the GL string delimiters ^, +, /, or | will be parsed, analyzed, and (possibly) transformed.  Strings not containing these symbols should be returned unchanged. No validation of human leukocyte antigen (HLA) or killer cell immunoglobulin-like receptor (KIR) GL strings is performed.
 #' @export
 #' @examples
@@ -13,13 +13,13 @@
 #'
 #' # the following represent identical genotypes
 #' gls <- c("HLA-C*0308/HLA-C*0309+HLA-C*0702/HLA-C*0710|HLA-C*0310+HLA-C*0702/HLA-C*0710","HLA-C*0710+HLA-C*0310/HLA-C*0308/HLA-C*0309|HLA-C*0702+HLA-C*0310/HLA-C*0308/HLA-C*0309")
-#' x <- sapply(gls,canonicalize)
-#' x[1] == x[2]
+#' x <- as.data.frame(t(sapply(gls,canonicalize)))
+#' x$glstring[[1]] == x$glstring[[2]]
 #'
 canonicalize <- function (glstring) {
     checkval <- checkglstring(glstring)
     if(!is.null(checkval)) {
-        return(list(glstring="",error=paste("Error: a locus cannot appear in multiple gene fields! ",checkval," appears in multiple '^'-delimited fields.",sep="")))
+        return(list(glstring="",inconsistency=paste("Error: a locus cannot appear in multiple gene fields! ",checkval," appears in multiple '^'-delimited fields.",sep="")))
     }
     loci <- sort(unlist(strsplit(glstring,"\\^")))
     lociout <- vector()
@@ -138,5 +138,5 @@ canonicalize <- function (glstring) {
 		lociout[locusn] <- paste(sort(genotypesout),collapse="|")
 		rm(m)
 	}
-	return(list(glstring=paste(sort(lociout),collapse="^"),error=""))
+	return(list(glstring=paste(sort(lociout),collapse="^"),inconsistency=""))
 }

@@ -49,14 +49,14 @@ disambiguate(
 
 \item{allelelog}{Logical to determine if a table of allele name mappings to accession numbers should be returned for each GL string. Defaults to \code{TRUE}.}
 
-\item{verbose}{Default value \code{"default"} provides some console feedback on each disambiguated GL string, \code{"quiet"} silences all messaging by the package with the exception of errors, and \code{"verbose"} provides information regarding allele name mapping in addition to default messaging on the console}
+\item{verbose}{Default value \code{"default"} provides some console feedback on each disambiguated GL string, \code{"quiet"} silences all messaging by the package with the exception of inconsistency errors, and \code{"verbose"} provides information regarding allele name mapping in addition to default messaging on the console}
 
 \item{dataload}{Controls usage of HLA data tables and by default attempts to load or update and load the tables required for disambiguation. This parameter has the default value \code{"default"}, in which case when versions cannot be determined for \code{allelehistory}, \code{freqbyacc}, or \code{deletedalleles}, the function attempts to load or download and load all the HLA data tables. If the parameter has the value \code{"package"}, then the tables delivered with the package install will be used. If the parameter has the value \code{"argsonly"}, then only when versions can be determined for \code{allelehistory}, \code{freqbyacc}, and \code{deletedalleles} will the function proceed.}
 }
 \value{
 A list with the components:
  \item{data}{A data frame with two variables:}
-   \item{$glstrings}{A vector of disambiguated GL strings, one for each input GL string, in the same order as input. Returns NA upon encountering errors processing arguments.}
+   \item{$glstrings}{A vector of disambiguated GL strings, one for each input GL string, in the same order as input. Returns NA upon encountering inconsistency processing arguments.}
    \item{$glscores}{A vector of scores, one for each input GL string, in the same order as input.}
  
  \item{alleletable}{A data frame containing five variables:}
@@ -65,9 +65,9 @@ A list with the components:
    \item{$accession}{The accession number assigned the allele, or NA (character).}
    \item{$status}{A factor with possible levels "deleted" (allele was found to have been deleted and replaced), "imgt" (allele was found in the specified IMGT version), "accession-imgt" (allele was identified as an HLA accession number), "rules" (allele was found in the specified IMGT version after applying HLA GL string matching rules), or "unidentified" if an accession number could not be assigned.}
 
- \item{error.accession}{TRUE if failures to identify accession numbers occurred, FALSE otherwise. }
- \item{error.parse}{TRUE if failures to parse input GL strings or process them were encountered, FALSE otherwise.}
- \item{error.call}{A character string describing an error. NA if GL strings are returned.}
+ \item{inconsistency.accession}{TRUE if failures to identify accession numbers occurred, FALSE otherwise. }
+ \item{inconsistency.parse}{TRUE if failures to parse input GL strings or process them were encountered, FALSE otherwise.}
+ \item{inconsistency.call}{A character string describing an inconsistency. NA if GL strings are returned.}
  \item{log}{Verbose details on GL String disambiguation. NA if argument \code{log} is FALSE.}
 }
 \description{
@@ -80,10 +80,13 @@ In this version, "Cw" and "C" are both permitted in glstrings, even if inappropr
 gls <- c("A*11011/A*11012+A*3303^C*03041/C*0308/C*0309+C*07011/C*07012/C*0706|C*03041/C*0308/C*0309+C*0705|C*0305+C*07011/C*07012/C*0706|C*0310+C*07011/C*07012/C*0706|C*0310+C*0705^B*4002+B*44031/B*44032","HLA-A*0203+HLA-A*2402101/HLA-A*2402101L/HLA-A*24022/HLA-A*2409N/HLA-A*2411N/HLA-A*2420/HLA-A*2426^HLA-B*40011/HLA-B*40012+HLA-B*5401")
 # dislevel=0 will perform partial disambiguation. Note extensive log information to stderr.
 gls.out <- disambiguate(probratio=0.5,freqbyacc=package_HLA_frequencies_by_accession,deletedalleles=package_HLA_deleted_alleles,allelehistory=package_HLA_allele_history,region="NAF",imgtversion = "1050",dislevel=0,mode="normal",glstrings=gls)
-gls.out
+str(gls.out)
+gls.out$data
 # dislevel=1 will perform complete disambiguation, irrespective of probratio value.
 gls.out <- disambiguate(probratio=0.5,freqbyacc=package_HLA_frequencies_by_accession,deletedalleles=package_HLA_deleted_alleles,allelehistory=package_HLA_allele_history,region="NAF",imgtversion = "1050",dislevel=1,mode="normal",glstrings=gls,log=TRUE)
-gls.out
+# Top 10 rows of log
+cat(paste(strsplit(gls.out$log,"\n")[[1]][1:10],collapse="\n"))
+gls.out$data
 
 # not run
 # Normally, one will want the latest HLA data tables:

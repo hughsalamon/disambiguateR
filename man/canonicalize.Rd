@@ -11,8 +11,8 @@ canonicalize(glstring)
 }
 \value{
 A list with the components:
- \item{glstring}{A character string transformed according to the sorting and simplifying algorithm in the function or an empty string in the case of an error.}
- \item{error}{An error message string or empty string.}
+ \item{glstring}{A character string transformed according to the sorting and simplifying algorithm in the function or an empty string in the case of an inconsistency error.}
+ \item{inconsistency}{An inconsistency error message string or empty string.}
 }
 \description{
 This function parses a GL string, represents information at each locus as an adjacency matrix, and returns a sorted, canonicalized GL string. Two GL strings that contain the same information regarding genotypes, not matter how different, both will be converted to an identical, compact GL string.
@@ -26,7 +26,7 @@ sapply(gls, canonicalize)
 
 # the following represent identical genotypes
 gls <- c("HLA-C*0308/HLA-C*0309+HLA-C*0702/HLA-C*0710|HLA-C*0310+HLA-C*0702/HLA-C*0710","HLA-C*0710+HLA-C*0310/HLA-C*0308/HLA-C*0309|HLA-C*0702+HLA-C*0310/HLA-C*0308/HLA-C*0309")
-x <- sapply(gls,canonicalize)
-x[1] == x[2]
+x <- as.data.frame(t(sapply(gls,canonicalize)))
+x$glstring[[1]] == x$glstring[[2]]
 
 }
