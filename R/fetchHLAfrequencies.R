@@ -5,7 +5,7 @@
 #' @return A list object with $data storing the data matrix, $version.date providing a date class variable for the version, and $error with a message or empty string upon successful completion
 #' @details Called by updateHLAfrequencies
 #' @export
-#' @examples fret <- fetchHLAfrequencies("http://igdawg.org/pubs/HLA_frequencies_by_accession_and_region.txt")
+#' @examples fret <- fetchHLAfrequencies("https://raw.githubusercontent.com/hughsalamon/disambiguateR/master/inst/HLA_frequencies_by_accession_and_region.txt")
 #' dim(fret$data)
 #' print(fret$version.date)
 #' print(fret$error)

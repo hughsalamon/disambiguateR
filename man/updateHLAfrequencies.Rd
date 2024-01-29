@@ -8,7 +8,7 @@ updateHLAfrequencies(
   force = FALSE,
   current = gl_HLA_frequencies_by_accession,
   url =
-    "https://github.com/hughsalamon/disambiguateR/raw/master/data/HLA_frequencies_by_accession_and_region.txt"
+    "https://raw.githubusercontent.com/hughsalamon/disambiguateR/master/inst/HLA_frequencies_by_accession_and_region.txt"
 )
 }
 \arguments{

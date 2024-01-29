@@ -19,7 +19,7 @@ This function fetches HLA frequency data and is called by updateHLAfrequencies
 Called by updateHLAfrequencies
 }
 \examples{
-fret <- fetchHLAfrequencies("http://igdawg.org/pubs/HLA_frequencies_by_accession_and_region.txt")
+fret <- fetchHLAfrequencies("https://raw.githubusercontent.com/hughsalamon/disambiguateR/master/inst/HLA_frequencies_by_accession_and_region.txt")
 dim(fret$data)
 print(fret$version.date)
 print(fret$error)
