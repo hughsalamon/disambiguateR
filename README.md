@@ -31,7 +31,9 @@ The data nomenclature and HLA allele name history data needs to be updated to be
 most useful. The package ships with RData objects containting data that is a few
 years old. The HLA allele frequency data should also be updated when possible.
 The HLA frequency data will now be served by this repository at: 
-link-style2[(https://raw.githubusercontent.com/hughsalamon/disambiguateR/master/inst/HLA_frequencies_by_accession_and_region.txt)]
+
+https://raw.githubusercontent.com/hughsalamon/disambiguateR/master/inst/HLA_frequencies_by_accession_and_region.txt
+
 The first thing to do is update these sources using:
 ```
 > updateHLAdata()
