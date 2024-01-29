@@ -2,7 +2,7 @@
 Genotype List String Disambiguation Using Human Leukocyte Antigen Allele Frequencies and
     a Generic String Canonicalization Algorithm
 WARNING: This package is in development. Both code and documentation are in flux and are not
-yet suitable for use outside the development team. Stay tuned for version 1.0!
+yet suitable for use outside the development team. Stay tuned!
     This package provides an algorithm to disambiguate Genotype List
     (GL) string data based on human leukocyte antigen (HLA) allele frequency data,
     deleted allele data, geographic region, and International Immunogenetics

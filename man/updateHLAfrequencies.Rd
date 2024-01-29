@@ -7,7 +7,8 @@
 updateHLAfrequencies(
   force = FALSE,
   current = gl_HLA_frequencies_by_accession,
-  url = "http://igdawg.org/pubs/HLA_frequencies_by_accession_and_region.txt"
+  url =
+    "https://github.com/hughsalamon/disambiguateR/raw/master/data/HLA_frequencies_by_accession_and_region.txt"
 )
 }
 \arguments{
