@@ -1,23 +1,9 @@
 # disambiguateR
-title: Genotype List String Disambiguation Using Human Leukocyte Antigen Allele Frequencies and
-    a Generic String Canonicalization Algorithm
-author: Hugh Salamon
-html_document:
-toc: TRUE
+Genotype List String Disambiguation Using Human Leukocyte Antigen Allele Frequencies and
+a Generic String Canonicalization Algorithm
 
-```{css, echo=FALSE}
-.link-style1 a {
-  color: blue;
-  text-decoration: underline;
-}
-
-.link-style2 a {
- color: blue;
-}
-
-```
-
-E-mail: .link-style1[[hugh@knowledgesynthesis.com](hugh@knowledgesynthesis.com)]
+###Hugh Salamon
+hugh@knowledgesynthesis.com
 
 ## WARNING
 This package is in development. Both code and documentation are in flux and may not
@@ -46,10 +32,12 @@ years old. The HLA allele frequency data should also be updated when possible.
 The HLA frequency data will now be served by this repository at: 
 link-style2[(https://raw.githubusercontent.com/hughsalamon/disambiguateR/master/inst/HLA_frequencies_by_accession_and_region.txt)]
 The first thing to do is update these sources using:
-```> updateHLAdata()
+```
+> updateHLAdata()
 ```
 The next step is to review the documentation and examples:
-```> ?disambiguate
+```
+> ?disambiguate
 ```
 
 
