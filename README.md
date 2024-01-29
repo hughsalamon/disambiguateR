@@ -2,7 +2,8 @@
 Genotype List String Disambiguation Using Human Leukocyte Antigen Allele Frequencies and
 a Generic String Canonicalization Algorithm
 
-### Hugh Salamon
+Hugh Salamon
+
 hugh@knowledgesynthesis.com
 
 ## WARNING
