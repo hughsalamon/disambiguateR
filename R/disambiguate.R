@@ -56,8 +56,8 @@
 #'
 #' # For a vector or list of GL Strings, gls, use guessimgtversion to calculate a different imgt version for each GL String, and create a data frame of disambiguated results
 #' # require(dplyr)
-#' # ret <- lapply(1:length(gls), function(X) {print(X);imgt <- guessimgtversion(gls[X]); ret<-disambiguate(gls[X],regionstring="EUR",dislevel=0,mode="normal",probratio=0.8,imgtversion=imgt,log=TRUE,allelelog=FALSE)$data; return(ret)}) %>% bind_rows
-#' # ret[1:2,1:4]
+#' # ret <- lapply(1:length(gls), function(X) {print(X);imgt <- guessimgtversion(gls[X]); ret<-cbind(disambiguate(gls[X],regionstring="EUR",dislevel=0,mode="normal",probratio=0.8,imgtversion=imgt,log=TRUE,allelelog=FALSE)$data,imgt); return(ret)}) %>% bind_rows
+#' # ret[1:2,]
 #' # write the verbose log for the second glstring to a file for inspection
 #' # write(ret$log[2],file="HLA_disambiguateR_tmplog.txt")
 #' #
@@ -68,7 +68,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
     # At the end of this code is a brief outline of the algorithm used to disambiguate GL strings. 
     # Much of the code is concerned with processing the function call, handling table loading, and processing the GL string(s).
     # Future code might be easier to understand were the algorithm itself in another function.
-    version <- "1.0.0"
+    version <- "1.1.1"
     if(log == FALSE) {
         dlog <- NA
     } else {

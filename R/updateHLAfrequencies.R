@@ -41,7 +41,7 @@ updateHLAfrequencies <- function (force=FALSE,current=gl_HLA_frequencies_by_acce
         }
     } else {
         if(force == FALSE) {
-            msg <- paste("Fetched HLA frequencies data with version ",fredat.fetched$version.date,". Current version is ",current$version.date,". Aborting update.",sep="")
+            msg <- paste("Fetched HLA frequencies data with version ",fredat.fetched$version.date,". Current version is ",current$version.date,". HLA frequencies not updated.",sep="")
             return(list(status=1,msg=msg))
         } else if (force == TRUE) {
             # update frequencies data

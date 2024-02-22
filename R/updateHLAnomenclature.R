@@ -41,7 +41,7 @@ updateHLAnomenclature <- function (force=FALSE,current=gl_HLA_deleted_alleles,ur
         }
     } else {
         if(force == FALSE) {
-            msg <- paste("Fetched HLA nomenclature data with version ",nomdat.fetched$version.date,". Current version is ",current$version.date,". Aborting update.",sep="")
+            msg <- paste("Fetched HLA nomenclature data with version ",nomdat.fetched$version.date,". Current version is ",current$version.date,". HLA nomenclature not updated.",sep="")
             return(list(status=1,msg=msg))
         } else if (force == TRUE) {
             # update nomenclature data

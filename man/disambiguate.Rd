@@ -97,8 +97,8 @@ gls.out$data
 
 # For a vector or list of GL Strings, gls, use guessimgtversion to calculate a different imgt version for each GL String, and create a data frame of disambiguated results
 # require(dplyr)
-# ret <- lapply(1:length(gls), function(X) {print(X);imgt <- guessimgtversion(gls[X]); ret<-disambiguate(gls[X],regionstring="EUR",dislevel=0,mode="normal",probratio=0.8,imgtversion=imgt,log=TRUE,allelelog=FALSE)$data; return(ret)}) \%>\% bind_rows
-# ret[1:2,1:4]
+# ret <- lapply(1:length(gls), function(X) {print(X);imgt <- guessimgtversion(gls[X]); ret<-cbind(disambiguate(gls[X],regionstring="EUR",dislevel=0,mode="normal",probratio=0.8,imgtversion=imgt,log=TRUE,allelelog=FALSE)$data,imgt); return(ret)}) \%>\% bind_rows
+# ret[1:2,]
 # write the verbose log for the second glstring to a file for inspection
 # write(ret$log[2],file="HLA_disambiguateR_tmplog.txt")
 #

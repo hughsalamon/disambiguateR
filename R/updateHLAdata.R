@@ -37,10 +37,10 @@ updateHLAdata <- function(force=FALSE, quickcheck=FALSE) {
     hisret <- updateHLAhistory(force=force,quickcheck=quickcheck)
     cat(hisret$msg,"\n")
     if(nomret$status + freret$status + hisret$status == 0) {
-        cat("HLA data updates were completed\n")
+        cat("All HLA data updates were completed\n")
         uret <- 0
     } else {
-        cat("HLA data updates were not completed. See messages above.\n")
+        cat("At least one HLA data update was not completed. See messages above.\n")
         uret <- 1
     }
     ret <- loadHLAdata()

@@ -17,7 +17,7 @@
 updateHLAhistory <- function (force=FALSE,quickcheck=FALSE,current=gl_HLA_allele_history,url="http://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt") {
     if(quickcheck==TRUE && force==FALSE && !is.null(gl_HLA_allele_history$version)) {
     	tmp <- gl_HLA_allele_history$version
-        check.header <- read.table(file="http://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt",nrows = 6)
+        check.header <- read.table(file="http://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt",nrows = 6,comment.char="")
         n <- grep("date:",check.header)
         check.version.date <- unlist(strsplit(check.header[n],": "))[2]
         n <- grep("version:",check.header)
@@ -27,7 +27,9 @@ updateHLAhistory <- function (force=FALSE,quickcheck=FALSE,current=gl_HLA_allele
     	if(check.version <= tmp) {
             msg <- "A quick check suggests that HLA history is not newer than the current data. Not fetching, aborting update. Use updateHLAhistory(force = TRUE) to override."
             return(list(status=1,msg=msg))
-	}
+        } else {
+            msg <- "A quick check suggests that HLA history is newer than the current data. Attemping update..."
+        }
     }
     hisdat.fetched <- fetchHLAhistory(url)
     if(!(hisdat.fetched$error) == "") {
@@ -57,7 +59,7 @@ updateHLAhistory <- function (force=FALSE,quickcheck=FALSE,current=gl_HLA_allele
         }
     } else {
         if(force == FALSE) {
-            msg <- paste("Fetched HLA history data with version ",hisdat.fetched$version,". Current version is ",current$version,". Aborting update.",sep="")
+            msg <- paste("Fetched HLA history data with version ",hisdat.fetched$version,". Current version is ",current$version,". HLA history data not updated.",sep="")
             return(list(status=1,msg=msg))
         } else if (force == TRUE) {
             # update history data
