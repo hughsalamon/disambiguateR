@@ -7,7 +7,9 @@
 #' @return A list object with $status 0 when an update is successful and 1 otherwise. See $msg for clarifications.
 #' @details Calls fetchHLAfrequencies
 #' @export
-#' @examples uret <- updateHLAfrequencies()
+#' @examples 
+#' loadHLAdata()
+#' uret <- updateHLAfrequencies()
 #' uret$status
 #' uret$msg
 #'

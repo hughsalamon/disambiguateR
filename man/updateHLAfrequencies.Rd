@@ -28,6 +28,7 @@ This function updates HLA frequency data used for disambiguation.
 Calls fetchHLAfrequencies
 }
 \examples{
+loadHLAdata()
 uret <- updateHLAfrequencies()
 uret$status
 uret$msg

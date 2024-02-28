@@ -8,10 +8,6 @@
 #' @return A list object with $status 0 when an update is successful and 1 otherwise. See $msg for clarifications.
 #' @details Calls fetchHLAhistory. \code{quickcheck} is useful if download times for HLA history data are inconvenient.
 #' @export
-#' @examples 
-#' #uret <- updateHLAhistory()
-#' #uret$status
-#' #uret$msg
 #'
 
 updateHLAhistory <- function (force=FALSE,quickcheck=FALSE,current=gl_HLA_allele_history,url="http://ftp.ebi.ac.uk/pub/databases/ipd/imgt/hla/Allelelist_history.txt") {

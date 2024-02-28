@@ -7,9 +7,6 @@
 #' @return A list object with $status 0 when an update is successful and 1 otherwise. See $msg for clarifications.
 #' @details Calls fetchHLAnomenclature
 #' @export
-#' @examples uret <- updateHLAnomenclature()
-#' uret$status
-#' uret$msg
 #'
 
 updateHLAnomenclature <- function (force=FALSE,current=gl_HLA_deleted_alleles,url="https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom.txt") {

@@ -29,9 +29,3 @@ This function updates HLA history data used for disambiguation.
 \details{
 Calls fetchHLAhistory. \code{quickcheck} is useful if download times for HLA history data are inconvenient.
 }
-\examples{
-#uret <- updateHLAhistory()
-#uret$status
-#uret$msg
-
-}

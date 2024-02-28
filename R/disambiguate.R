@@ -68,7 +68,7 @@ disambiguate <- function(glstrings,freqbyacc=NULL,deletedalleles=NULL,allelehist
     # At the end of this code is a brief outline of the algorithm used to disambiguate GL strings. 
     # Much of the code is concerned with processing the function call, handling table loading, and processing the GL string(s).
     # Future code might be easier to understand were the algorithm itself in another function.
-    version <- "1.1.1"
+    version <- "1.1.2"
     if(log == FALSE) {
         dlog <- NA
     } else {

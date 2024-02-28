@@ -26,9 +26,3 @@ This function updates HLA nomenclature data used for disambiguation.
 \details{
 Calls fetchHLAnomenclature
 }
-\examples{
-uret <- updateHLAnomenclature()
-uret$status
-uret$msg
-
-}
